@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "./Whitelist.sol";
+import "./TradeManager.sol";
 
 contract ERC20Whitelist {
 
@@ -20,7 +20,7 @@ contract ERC20Whitelist {
     checkWhitelist(to);
   }
 
-  function checkWhitelist(address _address) internal {
+  function checkWhitelist(address _address) internal view {
     require(whitelist.isWhitelisted(_address), "Address NOT whitelisted");
   }
 }

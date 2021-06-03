@@ -20,7 +20,7 @@ contract Whitelist is AccessControl {
 
 
     //CHECK IF ACCOUNT IS WHITELISTED
-    function isWhitelisted(address account) public virtual returns(bool) {
+    function isWhitelisted(address account) public view virtual returns(bool) {
         return _isWhitelisted[account];
     }
 
