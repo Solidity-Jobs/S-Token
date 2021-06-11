@@ -20,8 +20,6 @@ Function Transfer.From
 
 Pausable (admin) Paused (bool)
 
-///////////Meterias una funcion para gestionar la liquidez de Uniswap desde este smart contract?
-
 S-Tokens Constr [] Function Transfer (check whitelist) Function Set.Minter (only owner) Function Mint
 
 Function Increase.Allowance Funtion zero.allowance Allowance? (sats)
