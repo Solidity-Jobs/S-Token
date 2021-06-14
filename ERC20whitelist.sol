@@ -19,8 +19,10 @@ contract ERC20Whitelist {
     }
     checkWhitelist(to);
   }
-
+  
+  //Verify that _address is whitelisted before a token transfer
   function checkWhitelist(address _address) internal view {
     require(whitelist.isWhitelisted(_address), "Address NOT whitelisted");
   }
+  
 }

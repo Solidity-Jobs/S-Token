@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "./access/AccessControl.sol";
 
 contract Whitelist is AccessControl {
 
@@ -35,13 +35,22 @@ contract Whitelist is AccessControl {
         _isWhitelisted[account] = false;
         emit Blacklisted(account);
     }
+    
+    //Whitelist multiple accounts at once by passing an array of addresses
+    function batchWhitelist(address[] memory users) public onlyRole(WHITELISTER_ROLE) {
+        
+        uint8 i = 0;
+        for (i; i < users.length; i++) {
+            whitelistAccount(users[i]);
+        }
+    }
 
-    //ADD WHITELISTER
+    //Add whitelister - Only Admin
     function addWhitelister(address account) public onlyRole(getRoleAdmin(WHITELISTER_ROLE)) {
         grantRole(WHITELISTER_ROLE, account);
     }
     
-    // REMOVE WHITELISTER
+    //Remove whitelister - Only Admin
     function removeWhitelister(address account) public onlyRole(getRoleAdmin(WHITELISTER_ROLE)) {
         revokeRole(WHITELISTER_ROLE, account);
     }
