@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "./ERC20.sol";
-import "./AccessControlEnumerable.sol";
 import "./Context.sol";
 
 /**
@@ -22,8 +21,7 @@ abstract contract ERC20MintWithFee is Context, ERC20 {
      * - the caller must have the `MINTER_ROLE`.
      */
 
-    function mint(address to, uint256 amount) public virtual returns (bool) {
-        require(canMint(_msgSender()), "ERC20Minter: must have minter role to mint");
+    function _mint(address to, uint256 amount) internal virtual override returns (bool) {
 
         uint256 fee = amount*995/1000;
         uint256 mintAmount = amount-(fee*3);
