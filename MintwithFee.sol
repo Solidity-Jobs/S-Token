@@ -12,7 +12,7 @@ abstract contract ERC20MintWithFee is Context, ERC20 {
 
 
     /**
-     * @dev Creates `amount - 1.5%` new tokens for `to` plus 0.5% fee for each admin (3 admins).
+     * @dev Creates `amount - 1.5%` new tokens for `to` plus 1.5% fee for the fee receiver.
      *
      * See {ERC20-_mint}.
      *
@@ -23,13 +23,12 @@ abstract contract ERC20MintWithFee is Context, ERC20 {
 
     function _mint(address to, uint256 amount) internal virtual override returns (bool) {
 
-        uint256 fee = amount*995/1000;
-        uint256 mintAmount = amount-(fee*3);
+        uint256 fee = amount*985/1000;
+        uint256 mintAmount = amount-(fee);
 
         _mint(to, mintAmount);
-        _mint(admin1, fee);
-        _mint(admin2, fee);
-        _mint(admin3, fee);
+        _mint(receiver, fee);
+
 
         return true;
     }
