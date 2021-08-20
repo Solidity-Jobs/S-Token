@@ -4,12 +4,13 @@ pragma solidity ^0.8.0;
 import "./token/ERC20/ERC20.sol";
 import "./access/AccessControl.sol";
 import "./token/ERC20/extensions/ERC20Burnable.sol";
+import "./token/ERC20/extensions/ERC20Pausable.sol";
 import "./token/ERC20/extensions/draft-ERC20Permit.sol";
 import "./TradeManager.sol";
 import "./ERC20whitelist.sol";
 
 
-contract CRPNT is ERC20Burnable, ERC20Permit, ERC20Whitelist, AccessControl {
+contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, AccessControl {
     
     bool public mintingFinished = false;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
