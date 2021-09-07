@@ -47,8 +47,8 @@ contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, Acc
     }
     
     //Override the transfer function to check if addresses are whitelisted
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override(ERC20Whitelist, ERC20) {
-    super._beforeTokenTransfer(from, to, amount);
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override(ERC20Whitelist, ERC20, ERC20Pausable) {
+        super._beforeTokenTransfer(from, to, amount);
     }
     
     //Change whitelist database address
