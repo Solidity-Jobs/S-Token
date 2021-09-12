@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "./token/ERC20/ERC20.sol";
 import "./access/AccessControl.sol";
 import "./token/ERC20/extensions/ERC20Burnable.sol";
-import "./token/ERC20/extensions/ERC20Pausable.sol";
 import "./token/ERC20/extensions/draft-ERC20Permit.sol";
 import "./TradeManager.sol";
 import "./ERC20whitelist.sol";
@@ -14,6 +13,7 @@ contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, Acc
     
     bool public mintingFinished = false;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     address public feeReceiver;
 
 
@@ -46,8 +46,18 @@ contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, Acc
         revokeRole(MINTER_ROLE, account);
     }
     
+    //Add pauser
+    function addPauser(address account) public onlyRole(getRoleAdmin(PAUSER_ROLE)) {
+        grantRole(PAUSER_ROLE, account);
+    }
+    
+    //Remove pauser
+    function removePauser(address account) public onlyRole(getRoleAdmin(PAUSER_ROLE)) {
+        revokeRole(PAUSER_ROLE, account);
+    }
+    
     //Override the transfer function to check if addresses are whitelisted
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override(ERC20Whitelist, ERC20) {
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override(ERC20Whitelist, ERC20Pausable, ERC20) {
     super._beforeTokenTransfer(from, to, amount);
     }
     
@@ -60,6 +70,28 @@ contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, Acc
     function changeFeeReceiver(address _feeReceiver) public {
         require(msg.sender == feeReceiver, "Not allowed");
         feeReceiver = _feeReceiver;
+    }
+    
+      /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    function pause() public virtual whenNotPaused onlyRole(PAUSER_ROLE) {
+        _pause();
+    }
+
+    /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function unpause() public virtual whenPaused onlyRole(PAUSER_ROLE) {
+        _unpause();
     }
 
 }
