@@ -8,10 +8,10 @@ import "./token/ERC20/extensions/ERC20Pausable.sol";
 
 abstract contract ERC20Whitelist is ERC20Pausable {
 
-  Whitelist public whitelist;
+  TradeManager public whitelist;
 
   constructor(address _whitelist) {
-      whitelist = Whitelist(_whitelist);
+      whitelist = TradeManager(_whitelist);
   }
 
   //Verify if address is whitelisted before the transfer of tokens. If address from or to is not whitelisted, the transfer will fail.
