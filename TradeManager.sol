@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import "./access/AccessControl.sol";
 
-contract Whitelist is AccessControl {
+contract TradeManager is AccessControl {
 
     mapping (address => bool) private _isWhitelisted;
 
