@@ -23,7 +23,7 @@ contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, Acc
     }
     
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE){
-        require(!mintingFinished);
+        require(!mintingFinished, "Minting has been deactivated");
         uint256 mintAmount = amount*985/1000;
         uint256 fee = amount-(mintAmount);
 
