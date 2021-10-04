@@ -15,6 +15,7 @@ contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, Acc
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     address public feeReceiver;
+    address public proposedFeeReceiver;
 
 
     constructor(string memory _name, string memory _symbol, address _whitelist, address _feeReceiver) ERC20(_name, _symbol) ERC20Permit(_name) ERC20Whitelist(_whitelist) {
@@ -66,10 +67,19 @@ contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, Acc
         whitelist = TradeManager(_whitelist);
     }
     
-    //Change feeReceiver address. Only current receiver can update the address
-    function changeFeeReceiver(address _feeReceiver) public {
-        require(msg.sender == feeReceiver, "Not allowed");
-        feeReceiver = _feeReceiver;
+    //The current feeReceiver can propose a new feeReceiver. The new account must claimFeeReceiver().
+    //This method improves security by checking that the new feeReceiver can indeed operate.
+    function proposeFeeReceiver(address _proposedReceiver) public {
+        require(msg.sender == feeReceiver, "Only current feeReceiver can propose a new feeReceiver");
+        proposedFeeReceiver = _proposedReceiver;
+    }
+    
+    //The proposedFeeReceiver account can claim feeReceiver status to collect minting fees.
+    //The new feeReceiver must be first proposed through proposeFeeReceiver().
+    function claimFeeReceiver() public {
+        require(msg.sender == proposedFeeReceiver, "Caller is not the proposedFeeReceiver");
+        feeReceiver = proposedFeeReceiver;
+        proposedFeeReceiver = address(0);
     }
     
       /**
