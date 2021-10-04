@@ -18,8 +18,10 @@ contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, Acc
     address public proposedFeeReceiver;
 
 
-    constructor(string memory _name, string memory _symbol, address _whitelist, address _feeReceiver) ERC20(_name, _symbol) ERC20Permit(_name) ERC20Whitelist(_whitelist) {
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    constructor(string memory _name, string memory _symbol, address _whitelist, address _feeReceiver, address _admin, address _minter, address _pauser) ERC20(_name, _symbol) ERC20Permit(_name) ERC20Whitelist(_whitelist) {
+        _setupRole(DEFAULT_ADMIN_ROLE, _admin);
+        _setupRole(MINTER_ROLE, _minter);
+        _setupRole(PAUSER_ROLE, _pauser);
         feeReceiver = _feeReceiver;
     }
     
