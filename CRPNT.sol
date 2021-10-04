@@ -63,7 +63,7 @@ contract CRPNT is ERC20Burnable, ERC20Pausable, ERC20Permit, ERC20Whitelist, Acc
     
     //Change whitelist database address
     function changeWhitelist(address _whitelist) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        whitelist = Whitelist(_whitelist);
+        whitelist = TradeManager(_whitelist);
     }
     
     //Change feeReceiver address. Only current receiver can update the address
