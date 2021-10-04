@@ -8,7 +8,7 @@ contract LockedCRPNT is ERC20, Ownable {
     
     address public CRPNT;
     
-    uint256 public unlockTime;//General unlock time
+    uint256 public unlockTime;
 
     
     constructor(uint256 _unlockTime, address _CRPNT) ERC20("CRPNT-LOCKED", "CRPNT-L") {
@@ -44,7 +44,6 @@ contract LockedCRPNT is ERC20, Ownable {
     
     //Burn LockedCRPNT from account and transfer an equal amount of CRPNT to account
     function _unlock(address account) internal virtual {
-        //require(block.timestamp >= unlockTime[account], "Tokens locked");//Individual unlock time
         require(block.timestamp >= unlockTime, "Tokens locked");//General unlock time
         uint256 amount = balanceOf(account);
         _burn(account, amount);
