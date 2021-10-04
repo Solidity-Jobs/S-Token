@@ -13,8 +13,8 @@ contract TradeManager is AccessControl {
 
     bytes32 public constant WHITELISTER_ROLE = keccak256("WHITELISTER_ROLE");
 
-    constructor(address _whitelister) {
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    constructor(address _admin, address _whitelister) {
+        _setupRole(DEFAULT_ADMIN_ROLE, _admin);
         _setupRole(WHITELISTER_ROLE, _whitelister);
     }
 
