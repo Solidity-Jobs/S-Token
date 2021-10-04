@@ -8,20 +8,18 @@ contract LockedCRPNT is ERC20, Ownable {
     
     address public CRPNT;
     
-    mapping(address => uint256) public unlockTime;//Individual unlock time
-    //uint256 public unlockTime;//General unlock time
+    uint256 public unlockTime;//General unlock time
 
     
-    constructor() ERC20("CRP-LOCKED", "CRP-L") {
-        CRPNT = 0xd3753D816FedCbde2e4F93FB948C930442Fd8711;
-        _mint(msg.sender, 1000000 ether);
+    constructor(uint256 _unlockTime, address _CRPNT) ERC20("CRPNT-LOCKED", "CRPNT-L") {
+        CRPNT = _CRPNT;
+        unlockTime = _unlockTime;
     }
     
     /**
-     * @dev Only the contract owner can transfer locked tokens.
-     * @param account User address
-     * @param amount User amount
-     * @param _unlockTime User unlock time
+     * @dev If caller is not the owner, only _mint() and _burn() are allowed.
+     * @param from Origin address
+     * @param to Destination address
      */
     function _beforeTokenTransfer(address from, address to, uint256 ) internal virtual override(ERC20) {
         if (from != owner()) {
@@ -32,52 +30,51 @@ contract LockedCRPNT is ERC20, Ownable {
         }
     }
     
-    function unlock(uint256 amount) public virtual {
-        _unlock(msg.sender, amount);
+    //_unlock() CRPNT for msg.sender.
+    function unlock() public virtual {
+        _unlock(msg.sender);
     }
     
-    function unlockMultiple(address[] memory accounts, uint256[] memory amounts) public virtual onlyOwner {
+    //Contract owner can _unlock() for an array of addresess
+    function unlockMultiple(address[] calldata accounts) public virtual onlyOwner {
         for (uint256 i = 0; i < accounts.length; i++) {
-            _unlock(accounts[i], amounts[i]);
+            _unlock(accounts[i]);
         }
     }
     
-    function _unlock(address account, uint256 amount) internal virtual {
-        require(block.timestamp >= unlockTime[account], "Tokens locked");//Individual unlock time
-        //require(block.timestamp >= unlockTime, "Tokens locked");//General unlock time
+    //Burn LockedCRPNT from account and transfer an equal amount of CRPNT to account
+    function _unlock(address account) internal virtual {
+        //require(block.timestamp >= unlockTime[account], "Tokens locked");//Individual unlock time
+        require(block.timestamp >= unlockTime, "Tokens locked");//General unlock time
+        uint256 amount = balanceOf(account);
         _burn(account, amount);
         IERC20(CRPNT).transfer(account, amount);
     }
     
-    function setUnlockTime(address account, uint256 _timestamp) public virtual onlyOwner {
-        unlockTime[account] = _timestamp;
-    }
-    
-    function _setUnlockTime(address account, uint256 _timestamp) internal virtual {
-        unlockTime[account] = _timestamp;
+    //Set the unlock time in UNIX Timestamp
+    function setUnlockTime(uint256 _timestamp) public virtual onlyOwner {
+        unlockTime = _timestamp;
     }
     
     
     /**
-     * @dev Set the amount of locked CRPNT for an account and its unlock time. Only owner can call this function.
-     * @param account User address
-     * @param amount User amount
-     * @param _unlockTime User unlock time
+     * @dev Set the amount of locked CRPNT for an account. LockedCRPNT representing the locked CRPNT amount will be minted.
+     * Only owner can call this function.
+     * @param account User address that tokens will be minted to.
+     * @param amount Token amount to be minted
      */
-    function setLockedAmount(address account, uint256 amount, uint256 _unlockTime) public virtual onlyOwner {
+    function setLockedAmount(address account, uint256 amount) public virtual onlyOwner {
         _mint(account, amount);
-        setUnlockTime(account, _unlockTime);
     }
     
     /**
-     * @dev Allows owner to call setLockedAmount for an array of addresess. Only owner can call this function.
+     * @dev Allows owner to call setLockedAmount() for an array of addresess. Only owner can call this function.
      * @param accounts Array of user addresess
      * @param amounts Array of user amounts
-     * @param _unlockTime Array of user unlock time
      */
-    function setLockedAmounts(address[] memory accounts, uint256[] memory amounts, uint256[] memory _unlockTime) public virtual onlyOwner {
+    function setLockedAmounts(address[] calldata accounts, uint256[] calldata amounts) public virtual onlyOwner {
         for (uint256 i = 0; i < accounts.length; i++) {
-            setLockedAmount(accounts[i], amounts[i], _unlockTime[i]);
+            setLockedAmount(accounts[i], amounts[i]);
         }
     }
 }
