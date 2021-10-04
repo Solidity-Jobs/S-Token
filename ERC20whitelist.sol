@@ -26,7 +26,11 @@ abstract contract ERC20Whitelist is ERC20Pausable {
   
   //Verify that _address is whitelisted before a token transfer
   function checkWhitelist(address _address) internal view {
-    require(whitelist.isWhitelisted(_address), "Address NOT whitelisted");
+    require(whitelist.isWhitelisted(_address), string(abi.encodePacked(
+                "TradeManager: account ",
+                Strings.toHexString(uint160(_address), 20),
+                " is not whitelisted"
+            )));
   }
   
   //Returns true if _address is whitelisted, false if it is not
